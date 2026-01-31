@@ -1,0 +1,8 @@
+com\example\todoapp\model\Statut.class
+com\example\todoapp\TodoApplication.class
+com\example\todoapp\model\Tache.class
+com\example\todoapp\controller\TacheController.class
+com\example\todoapp\repository\StatutRepository.class
+com\example\todoapp\repository\TacheRepository.class
+com\example\todoapp\controller\StatutController.class
+com\example\todoapp\controller\TacheViewController.class
