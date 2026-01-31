@@ -21,16 +21,36 @@ public class TacheViewController {
     @GetMapping
     public String listTaches(Model model) {
         model.addAttribute("taches", tacheRepository.findAll());
+        model.addAttribute("statuts", statutRepository.findAll());
         return "taches";
     }
 
     @PostMapping("/ajouter")
-    public String addTache(@ModelAttribute Tache tache) {
-        // Par défaut, on peut mettre le premier statut si non spécifié
-        if (tache.getStatut() == null) {
+    public String addTache(@ModelAttribute Tache tache, @RequestParam(required = false) Long statutId) {
+        if (statutId != null) {
+            statutRepository.findById(statutId).ifPresent(tache::setStatut);
+        } else if (tache.getStatut() == null) {
             statutRepository.findByNom("A FAIRE").ifPresent(tache::setStatut);
         }
         tacheRepository.save(tache);
+        return "redirect:/taches";
+    }
+
+    @PostMapping("/modifier")
+    public String updateTache(@ModelAttribute Tache tache, @RequestParam Long id, @RequestParam Long statutId) {
+        tacheRepository.findById(id).ifPresent(existingTache -> {
+            existingTache.setTitre(tache.getTitre());
+            existingTache.setDescription(tache.getDescription());
+            existingTache.setPriorite(tache.getPriorite());
+            statutRepository.findById(statutId).ifPresent(existingTache::setStatut);
+            tacheRepository.save(existingTache);
+        });
+        return "redirect:/taches";
+    }
+
+    @PostMapping("/supprimer")
+    public String deleteTache(@RequestParam Long id) {
+        tacheRepository.deleteById(id);
         return "redirect:/taches";
     }
 }
